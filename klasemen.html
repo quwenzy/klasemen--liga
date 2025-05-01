@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Klasemen Liga Dunia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-6">Klasemen Liga Dunia</h1>
+
+    <!-- Tabel Klasemen -->
+    <div class="overflow-auto mb-10">
+      <table class="w-full table-auto border-collapse rounded-lg overflow-hidden shadow-lg">
+        <thead class="bg-gray-700 text-left">
+          <tr>
+            <th class="p-3">#</th>
+            <th class="p-3">Logo</th>
+            <th class="p-3">Tim</th>
+            <th class="p-3">Negara</th>
+            <th class="p-3">M</th>
+            <th class="p-3">W</th>
+            <th class="p-3">D</th>
+            <th class="p-3">L</th>
+            <th class="p-3">GM</th>
+            <th class="p-3">GK</th>
+            <th class="p-3">SG</th>
+            <th class="p-3">Poin</th>
+          </tr>
+        </thead>
+        <tbody id="klasemenBody" class="bg-gray-800 divide-y divide-gray-700">
+          <!-- Data akan muncul di sini -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Form Tambah Tim -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow mb-6">
+      <h2 class="text-xl font-semibold mb-3">Tambah Tim</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <input id="namaTim" type="text" placeholder="Nama Tim" class="p-2 rounded text-black" />
+        <select id="negara" class="p-2 rounded text-black">
+          <option value="" disabled selected>Pilih Negara</option>
+          <option value="https://flagcdn.com/w40/gb.png">Inggris</option>
+          <option value="https://flagcdn.com/w40/es.png">Spanyol</option>
+          <option value="https://flagcdn.com/w40/de.png">Jerman</option>
+          <option value="https://flagcdn.com/w40/it.png">Italia</option>
+          <option value="https://flagcdn.com/w40/fr.png">Prancis</option>
+          <option value="https://flagcdn.com/w40/br.png">Brasil</option>
+          <option value="https://flagcdn.com/w40/ar.png">Argentina</option>
+          <option value="https://flagcdn.com/w40/pt.png">Portugal</option>
+          <option value="https://flagcdn.com/w40/nl.png">Belanda</option>
+        </select>
+        <input id="logoURL" type="text" placeholder="Masukkan URL Logo Klub" class="p-2 rounded text-black" />
+        <input id="main" type="number" placeholder="Main (M)" class="p-2 rounded text-black" />
+        <input id="menang" type="number" placeholder="Menang (W)" class="p-2 rounded text-black" />
+        <input id="seri" type="number" placeholder="Seri (D)" class="p-2 rounded text-black" />
+        <input id="kalah" type="number" placeholder="Kalah (L)" class="p-2 rounded text-black" />
+        <input id="gm" type="number" placeholder="Gol Masuk" class="p-2 rounded text-black" />
+        <input id="gk" type="number" placeholder="Gol Kebobolan" class="p-2 rounded text-black" />
+      </div>
+      <button onclick="tambahTim()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Tambah ke Klasemen</button>
+    </div>
+  </div>
+
+  <script>
+    let dataTim = [];
+
+    function tambahTim() {
+      const nama = document.getElementById("namaTim").value;
+      const flag = document.getElementById("negara").value;
+      const logo = document.getElementById("logoURL").value;
+      const main = parseInt(document.getElementById("main").value);
+      const menang = parseInt(document.getElementById("menang").value);
+      const seri = parseInt(document.getElementById("seri").value);
+      const kalah = parseInt(document.getElementById("kalah").value);
+      const gm = parseInt(document.getElementById("gm").value);
+      const gk = parseInt(document.getElementById("gk").value);
+
+      if (!nama || !flag || !logo || isNaN(main) || isNaN(menang) || isNaN(seri) || isNaN(kalah) || isNaN(gm) || isNaN(gk)) {
+        alert("Mohon isi semua kolom dengan benar!");
+        return;
+      }
+
+      const sg = gm - gk;
+      const poin = (menang * 3) + seri;
+
+      dataTim.push({ nama, flag, logo, main, menang, seri, kalah, gm, gk, sg, poin });
+      dataTim.sort((a, b) => b.poin - a.poin || b.sg - a.sg || b.gm - a.gm);
+      tampilkanKlasemen();
+
+      document.querySelectorAll("input").forEach(input => input.value = "");
+      document.getElementById("negara").selectedIndex = 0;
+    }
+
+    function tampilkanKlasemen() {
+      const tbody = document.getElementById("klasemenBody");
+      tbody.innerHTML = "";
+      dataTim.forEach((tim, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="p-3">${index + 1}</td>
+            <td class="p-3"><img src="${tim.logo}" alt="Logo ${tim.nama}" class="w-10 h-10 rounded-full border border-gray-600" /></td>
+            <td class="p-3 font-semibold">${tim.nama}</td>
+            <td class="p-3"><img src="${tim.flag}" class="w-6 h-4 rounded border border-gray-600" alt="Bendera" /></td>
+            <td class="p-3">${tim.main}</td>
+            <td class="p-3">${tim.menang}</td>
+            <td class="p-3">${tim.seri}</td>
+            <td class="p-3">${tim.kalah}</td>
+            <td class="p-3">${tim.gm}</td>
+            <td class="p-3">${tim.gk}</td>
+            <td class="p-3">${tim.sg}</td>
+            <td class="p-3 font-bold flex items-center justify-center">${tim.poin}</td>
+          </tr>`;
+      });
+    }
+  </script>
+</body>
+</html>
